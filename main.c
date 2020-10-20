@@ -76,7 +76,7 @@
         {
         misty->scrollingBack -= 0.6f;
         misty->pos.x += 1;
-        misty->sourceRec_stand.x = misty->frameAtual*misty->textura_stand.width/6;
+        misty->sourceRec_walk_right.x = misty->frameAtual*misty->textura_walk_right.width/4;
         
         if ( misty->scrollingBack <= -(misty->textura_background.width*2))  misty->scrollingBack = 0;
         
@@ -85,14 +85,14 @@
         {
         misty->scrollingBack += 0.6f;
         misty->pos.x -= 1;
-        misty->sourceRec_walk_left.x = misty->frameAtual*misty->textura_walk_left.width/6;
+        misty->sourceRec_walk_left.x = misty->frameAtual*misty->textura_walk_left.width/4;
         
         if ( misty->scrollingBack <= -(misty->textura_background.width*2))  misty->scrollingBack = 0;
         }
         if (IsKeyPressed(KEY_UP) && misty->pos.y == screenHeight - misty->textura_stand.height)
         {
         misty->vel.y = -10;
-        misty->sourceRec_jump.x = misty->frameAtual*misty->textura_jump.width/8;
+        misty->sourceRec_jump.x = misty->frameAtual*misty->textura_jump.width/2;
         }
     
         misty->vel.x += misty->acc.x;
@@ -116,7 +116,7 @@
         DrawTextureEx(misty->textura_background, (Vector2){misty->textura_background.width*2 + misty->scrollingBack, 20 }, 0.0f, 2.0f, WHITE);
         if(IsKeyDown(KEY_RIGHT))
         {
-        DrawTextureRec(misty->textura_stand, misty->sourceRec_walk_right, misty->pos, WHITE);
+        DrawTextureRec(misty->textura_walk_right, misty->sourceRec_walk_right, misty->pos, WHITE);
         }else if(IsKeyDown(KEY_LEFT))
         {
         DrawTextureRec(misty->textura_walk_left, misty->sourceRec_walk_left, misty->pos, WHITE);
