@@ -45,7 +45,7 @@
         misty->textura_walk_right = LoadTexture("./assets/WitchSprite/walk.png");
         Rectangle sr_walk_right = {0.0f, 0.0f, misty->textura_walk_right.width/4, misty->textura_walk_right.height};
         misty->sourceRec_walk_right = sr_walk_right;
-        misty->textura_walk_left = LoadTexture("./assets/WitchSprite/walk.png");
+        misty->textura_walk_left = LoadTexture("./assets/WitchSprite/walk_left.png");
         Rectangle sr_walk_left = {0.0f, 0.0f, misty->textura_walk_left.width/4, misty->textura_walk_left.height};
         misty->sourceRec_walk_left = sr_walk_left;
         misty->textura_jump = LoadTexture("./assets/WitchSprite/jump.png");
@@ -72,8 +72,60 @@
             }
         }
         
-        if(IsKeyDown(KEY_RIGHT)){
-            
+          if (IsKeyDown(KEY_RIGHT))
+        {
+        misty->scrollingBack -= 0.6f;
+        misty->pos.x += 1;
+        misty->sourceRec_stand.x = misty->frameAtual*misty->textura_stand.width/6;
+        
+        if ( misty->scrollingBack <= -(misty->textura_background.width*2))  misty->scrollingBack = 0;
+        
+        }
+        if (IsKeyDown(KEY_LEFT))
+        {
+        misty->scrollingBack += 0.6f;
+        misty->pos.x -= 1;
+        misty->sourceRec_walk_left.x = misty->frameAtual*misty->textura_walk_left.width/6;
+        
+        if ( misty->scrollingBack <= -(misty->textura_background.width*2))  misty->scrollingBack = 0;
+        }
+        if (IsKeyPressed(KEY_UP) && misty->pos.y == screenHeight - misty->textura_stand.height)
+        {
+        misty->vel.y = -10;
+        misty->sourceRec_jump.x = misty->frameAtual*misty->textura_jump.width/8;
+        }
+    
+        misty->vel.x += misty->acc.x;
+        misty->vel.y += misty->acc.y;
+        
+        misty->pos.x += misty->vel.x;
+        misty->pos.y += misty->vel.y;
+    
+        if(misty->pos.x < 0) misty->pos.x = 0;
+        if(misty->pos.x > 1150) misty->pos.x = 1150;
+        if(misty->pos.y < 0) misty->pos.y = 0;
+        if(misty->pos.y + misty->textura_stand.height > screenHeight) misty->pos.y = screenHeight - misty->textura_stand.height;
+    
+    
+        misty->sourceRec_walk_right.x = misty->frameAtual*misty->textura_walk_right.width/4;
+    }
+    
+    void drawMisty(MISTY* misty) {
+        
+        DrawTextureEx(misty->textura_background, (Vector2){misty->scrollingBack, 20 }, 0.0f, 2.0f, WHITE);
+        DrawTextureEx(misty->textura_background, (Vector2){misty->textura_background.width*2 + misty->scrollingBack, 20 }, 0.0f, 2.0f, WHITE);
+        if(IsKeyDown(KEY_RIGHT))
+        {
+        DrawTextureRec(misty->textura_stand, misty->sourceRec_walk_right, misty->pos, WHITE);
+        }else if(IsKeyDown(KEY_LEFT))
+        {
+        DrawTextureRec(misty->textura_walk_left, misty->sourceRec_walk_left, misty->pos, WHITE);
+        }else if(IsKeyDown(KEY_UP))
+        {
+        DrawTextureRec(misty->textura_jump, misty->sourceRec_jump, misty->pos, WHITE);
+        }else
+        {
+        DrawTextureRec(misty->textura_stand, misty->sourceRec_stand, misty->pos, WHITE);
         }
     }
 
@@ -83,24 +135,24 @@ int main(void) {
    
     
     InitWindow(screenWidth, screenHeight, "Coven");
+    SetTargetFPS(60);
     
-    Texture2D misty = LoadTexture("./assets/WitchSprite/stand.png");
+    MISTY* misty;
+    initMisty(&misty);
     
     
     while (!WindowShouldClose()) {
         
         BeginDrawing();
+        ClearBackground(RAYWHITE);
         
-            ClearBackground(RAYWHITE);
-
-            DrawTexture(misty, screenWidth/2 - misty.width/2, screenHeight/2 - misty.height/2, WHITE);
+        updateMisty(&misty);
+        drawMisty(&misty);
         
         EndDrawing();
         
     }
-    
-    UnloadTexture(misty);
-    
+        
     CloseWindow();
     
     return 0;
